@@ -27,13 +27,8 @@
  */
 #endregion
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using RaspberryPiDotNet;
 using RaspberryPiDotNet.MicroLiquidCrystal;
-using System.Threading;
 using Ktos.Common;
 
 namespace Ktos.Hd44780
