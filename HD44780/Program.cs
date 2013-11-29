@@ -46,7 +46,7 @@ namespace Ktos.Hd44780
             var lcd = new Lcd(lcdProvider);
 
             GPIOMem backlit = new GPIOMem(GPIOPins.GPIO_15, GPIODirection.Out);
-            backlit.Write(false);
+            //backlit.Write(false);
 
             lcd.Begin(16, 2);
             lcd.Clear();
@@ -62,7 +62,7 @@ namespace Ktos.Hd44780
                 backlit.Write(false);                
             }
             
-            string text;
+            string text = String.Empty;
             try
             {
                 var isKey = System.Console.KeyAvailable;
@@ -73,9 +73,22 @@ namespace Ktos.Hd44780
                 // when we're in piped output, InvalidOperationException is thrown for KeyAvaliable
                 // and we're using it here to check... dirty, dirty hack!
                 text = Console.In.ReadToEnd();
-            }                
+            }
 
-            lcd.Write(text);
+            //Console.WriteLine(text);
+
+            text = text.Replace("\r\n", "\n");
+            if (text.Length > 32) text = text.Substring(0, 32);
+            if (text.Length > 16) text = text.Insert(16, "\n");
+
+            if (text.IndexOf('\n') > -1)
+            {
+                lcd.Write(text.Substring(0, text.IndexOf('\n')));
+                lcd.SetCursorPosition(0, 1);
+                lcd.Write(text.Substring(text.IndexOf('\n') +1));
+            }
+            else
+                lcd.Write(text);
         }
 
 
