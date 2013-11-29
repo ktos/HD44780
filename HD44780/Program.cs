@@ -3,18 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using RaspberryPiDotNet;
-using RaspberryPiDotNet.MicroLiquidCrystal;
+//using RaspberryPiDotNet;
+//using RaspberryPiDotNet.MicroLiquidCrystal;
 using System.Threading;
+using Ktos.Common;
 
 namespace Ktos.Hd44780
 {
     class Program
     {
-
         static void Main(string[] args)
         {
-            var lcdProvider = new RaspPiGPIOMemLcdTransferProvider(GPIOPins.GPIO_07, GPIOPins.GPIO_08, GPIOPins.GPIO_25, GPIOPins.GPIO_24, GPIOPins.GPIO_23, GPIOPins.GPIO_18);
+            ArgumentParser pp = new ArgumentParser(args);
+            pp.AddExpanded("-l", "--light");
+            pp.AddExpanded("-nl", "--no-light");
+            pp.Parse();
+
+            /*var lcdProvider = new RaspPiGPIOMemLcdTransferProvider(GPIOPins.GPIO_07, GPIOPins.GPIO_08, GPIOPins.GPIO_25, GPIOPins.GPIO_24, GPIOPins.GPIO_23, GPIOPins.GPIO_18);
             var lcd = new Lcd(lcdProvider);
 
             GPIOMem backlit = new GPIOMem(GPIOPins.GPIO_15, GPIODirection.Out);
@@ -22,35 +27,32 @@ namespace Ktos.Hd44780
 
             lcd.Begin(16, 2);
             lcd.Clear();
-            lcd.SetCursorPosition(0, 0);
+            lcd.SetCursorPosition(0, 0);*/
 
-            if (args.Length == 2)
+            if (pp.SwitchExists("--light"))
             {
-                if (args[0] == "--light" || args[0] == "-l")
-                    backlit.Write(true);
-
-                lcd.Write(args[1]);
+                //backlit.Write(true);
+                Console.WriteLine("light");
             }
-            else if (args.Length == 1)
+
+            if (pp.SwitchExists("--no-light"))
             {
-                if (args[0] == "--light" || args[0] == "-l")
-                {
-                    backlit.Write(true);
-
-                    var text = Console.ReadLine();
-                    lcd.Write(text);
-                }
-                else
-                    lcd.Write(args[0]);
+                //backlit.Write(true);
+                Console.WriteLine("nolight");
             }
-            else
+            
+            string text;
+            try
             {
-                var text = Console.ReadLine();
-                lcd.Write(text);
+                var isKey = System.Console.KeyAvailable;
+                text = Console.ReadLine();
             }
-                
+            catch (Exception e)
+            {
+                text = Console.In.ReadToEnd();
+            }                
 
-                    
+            //lcd.Write(text);            
         }        
     }
 }
